@@ -12,20 +12,28 @@ RUN pip install virtualenv
 RUN git clone --recursive git://github.com/mozilla/moztrap
 RUN cd /moztrap && git checkout 1.5.4
 
-RUN apt-get install -y libmysqlclient-dev build-essential
-RUN apt-get install -y mysql-client
+RUN apt-get install -y libmysqlclient-dev build-essential mysql-client
+RUN apt-get install -y supervisor nginx
 RUN apt-get clean
 
-RUN cd moztrap && virtualenv .venv
-ADD tools/with_venv.sh moztrap/
-RUN chmod 755 moztrap/with_venv.sh
-RUN cd moztrap && ./with_venv.sh easy_install distribute==0.6.28
-RUN cd moztrap && ./with_venv.sh ./bin/install-reqs
-ADD local.py moztrap/moztrap/settings/
+RUN pip install uwsgi
 
-ADD setup_admin.py moztrap/
+COPY moztrap moztrap/
+WORKDIR /moztrap
+RUN virtualenv .venv
+RUN ./with_venv.sh ./bin/install-reqs
+RUN ./with_venv.sh ./manage.py collectstatic --noinput
+RUN chown -R www-data /moztrap
+
+WORKDIR /
+
+ADD moztrap-init.sh /
+ADD moztrap-nginx /etc/nginx/sites-enabled/
+ADD moztrap-supervisor.conf /etc/supervisor/conf.d/
+ADD moztrap-add-user.sh /
+ADD moztrap-uwsgi.ini /
 ADD run.sh /
-RUN chmod 740 run.sh
 
 EXPOSE 8000
-CMD ["/run.sh"]
+CMD ["/usr/bin/supervisord", "-n"]
+
