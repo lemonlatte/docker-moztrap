@@ -18,7 +18,7 @@ $ docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=qwerty --name mysql orchardu
 ### Initiate Moztrap
 
 ``` shell
-docker run -i -t --link=mysql:mysql -e MYSQL_ENV_MYSQL_PASS=qwerty docker-moztrap /moztrap-init.sh
+docker run -it --link=mysql:mysql -e MYSQL_ENV_MYSQL_PASS=qwerty docker-moztrap /moztrap-init.sh
 ```
 
 This command will initiate database for Moztrap.
@@ -26,13 +26,13 @@ This command will initiate database for Moztrap.
 ### Run Moztrap
 
 ``` shell
-$ docker run -i -t --link=mysql:mysql -p 8000:8000 docker-moztrap
+$ docker run -d --link=mysql:mysql -p 8000:8000 docker-moztrap
 ```
 
 ### Additional Command
 
 ``` shell
-$ docker run -i -t --link=mysql:mysql -p 8000:8000 docker-moztrap /moztrap-add-user.sh user user@localhost qwerty
+$ docker run -it --link=mysql:mysql docker-moztrap /moztrap-add-user.sh user user@localhost qwerty
 ```
 
 ## Simple User Tutorial
