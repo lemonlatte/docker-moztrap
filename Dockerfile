@@ -13,7 +13,7 @@ RUN git clone --recursive git://github.com/mozilla/moztrap
 RUN cd /moztrap && git checkout 1.5.4
 
 RUN apt-get install -y libmysqlclient-dev build-essential mysql-client
-RUN apt-get install -y supervisor nginx
+RUN apt-get install -y supervisor nginx memcached
 RUN apt-get clean
 
 RUN pip install uwsgi
